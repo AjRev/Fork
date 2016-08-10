@@ -1,5 +1,9 @@
 <ion-modal-view >
 <ion-view view-title="Friends">
+<ion-header-bar class="bar bar-header bar-positive">
+          <h1 class="title">Buddies</h1>
+          <button class="button button-clear button-primary" ng-click="modal.hide()">Cancel</button>
+  </ion-header-bar>
  <ion-content class="has-header padding">
 	<ion-list>
 		<ion-item ng-repeat="friend in userlist" class="item-remove-animate">
