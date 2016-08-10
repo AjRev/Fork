@@ -1,0 +1,36 @@
+<ion-view view-title="Create Event">
+<ion-nav-buttons>
+       <a ng-click="goBack()" class="button button-icon icon ion-ios-arrow-back"></a>
+</ion-nav-buttons>
+<ion-content class="has-header padding">
+<form name="createEventForm" novalidate>
+  <div class="list">
+    
+	<label class="item item-input">
+      <span class="input-label">Description</span>
+	  <input type="text" ng-model="list.description" required >
+    </label>
+	
+	<label class="item item-input">
+      <span class="input-label">Venue</span>
+	  <input type="text" ng-model="list.venue" required>
+    </label>
+	
+	<label class="item item-input">
+      <span class="input-label">Date</span>
+	  <input type="text" ng-model="list.date" required>
+    </label>
+	
+      <button class="button button-block button-stable" ng-click="listParticipants()" required>
+		Participants
+	  </button>
+	
+	
+      <button class="button button-block button-positive" ng-disabled="createEventForm.$invalid" ng-click="broadCast(list)">
+        Broadcast
+      </button>
+    </form>
+	
+  </div>
+</ion-content>
+</ion-view>

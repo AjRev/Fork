@@ -1,0 +1,17 @@
+<ion-view view-title="Participants">
+<ion-content class="has-header padding">
+
+  <div class="list">
+	<ion-checkbox align="center" ng-repeat="user in users" ng-model="user.checked" ng-change="checkedOrNot(user.email, user.checked, $index)">
+	{{user.email}}
+	</ion-checkbox>
+  </div>
+  <div>
+  {{participants}}
+  </div>
+  <div>
+  <button class="button" ng-click="done()">
+        Done
+</button>
+</ion-content>
+</ion-view>

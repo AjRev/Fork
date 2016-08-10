@@ -1,0 +1,21 @@
+<ion-view align="center" hide-back-button="false" view-title="Events">
+<ion-tabs class="tabs-stable tabs-icon-top">
+		<ion-tab title="Create Event" icon="ion-ios-people" ng-click="createEvent()">
+		</ion-tab>
+	</ion-tabs>
+
+<ion-content class="has-header padding">
+  <ion-list>
+  
+	<div class="list">
+	
+	<button class= "button button-block button-stable" ng-repeat="event in events | orderBy:'-Date'" ng-click="displayEvent(event.Eventid)"/>
+	<p class="alignleft">{{event.Description}}</p>
+	<p class="alignright">{{event.Date}}</p>
+	<div style="clear: both;"></div>
+	
+	</div>
+	
+  </ion-list>
+</ion-content>
+</ion-view>
