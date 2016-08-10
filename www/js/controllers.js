@@ -283,7 +283,7 @@ return $q(function(resolve) {
     }
 	});
 
-	$ionicModal.fromTemplateUrl('templates/friends.html', {
+	$ionicModal.fromTemplateUrl('/templates/friends.html', {
                 scope: $scope,
                 animation: 'slide-in-up'
             }).then(function (modal) {
