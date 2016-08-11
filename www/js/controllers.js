@@ -123,8 +123,8 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$window', '$rootScope', 'C
 				snapshot.forEach(function(childSnapshot) {
 				var tmp = childSnapshot.val();
 				if ( tmp[currlogin] == "True" ) {
-				deferred.resolve(tmp);
 				$scope.events.push(tmp);
+				deferred.resolve($scope.events);
 				} else { 
 				deferred.reject("No Value");
 				}
@@ -143,6 +143,7 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$window', '$rootScope', 'C
 		$scope.displayEvent = function(id) {
 		CurrUser.updateEventid(id);
 		$state.go('myevents', { reload : true });
+		
 		};
 		
 	}]);
@@ -154,12 +155,10 @@ forkapp.controller('ListCtrl', ['$scope', '$state', '$rootScope', '$ionicHistory
 	
 	$scope.goBack = function() {
 	$state.go('event');
-	$window.location.reload();
 	};
 	
 	function goBack() {
 	$state.go('event');
-	$window.location.reload();
 	};
 	
 	
@@ -336,7 +335,6 @@ updateEvent($scope.desc);
 
 $scope.goBack = function() {
 $state.go('event');
-$window.location.reload();
 };
 
 
