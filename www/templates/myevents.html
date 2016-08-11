@@ -1,4 +1,5 @@
-<ion-view view-title="{{uevent}}" cache-view="false">
+<ion-nav-view animation="slide-left-right">
+<ion-view view-title="{{uevent}}" cache-view="false" hide-back-button="{{hideBackButton}}">
 <ion-nav-buttons side="secondary">
       <button class="button" ng-click="addBill()">
         Add Bill
@@ -37,3 +38,4 @@
 </ion-tabs>
 
 </ion-view>
+</ion-nav-view>

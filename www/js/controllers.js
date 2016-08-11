@@ -149,7 +149,7 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$window', '$rootScope', 'C
 	}]);
 ///////////////////////////////////////////////////////////LIST CONTROLLER//////////////////////////////////////////////////////////////
 forkapp.controller('ListCtrl', ['$scope', '$state', '$rootScope', '$ionicHistory', 'CurrUser', '$window', function($scope, $state, $rootScope, $ionicHistory, CurrUser, $window) {
-	
+	$scope.hideBackButton = true;
 	var eventref = ref.child('Events');
 	var userref = ref.child('Users');
 	
@@ -241,7 +241,7 @@ forkapp.controller('ParticipantCtrl', ['$scope', '$state', '$ionicHistory', 'Cur
 /////////////////////////////////////////////////////////// EVENT CONTROLLER//////////////////////////////////////////////////////////////	
 	
 forkapp.controller('myeventsCtrl', ['$scope', '$state', '$window', 'CurrUser', '$q', '$timeout', '$ionicHistory', '$ionicPopup', '$ionicModal', function($scope, $state, $window, CurrUser, $q, $timeout, $ionicHistory, $ionicPopup, $ionicModal)  { 
-
+$scope.hideBackButton = true;
 $scope.userlist = [];
 var settled = " ";
 var usercount = 0;
