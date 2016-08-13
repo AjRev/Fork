@@ -1,6 +1,6 @@
 <ion-view view-title="{{uevent}}" cache-view="false" hide-back-button="{{hideBackButton}}">
 <ion-nav-buttons side="secondary">
-      <button class="button" ng-click="addBill()">
+      <button class="button" ng-disabled="isDisabled" ng-click="addBill()">
         Add Bill
       </button>
     </ion-nav-buttons>
@@ -9,9 +9,9 @@
   <ion-list>
   
     <ion-item ng-repeat="item in bills | orderBy:'-bill'" class="item-remove-animate">
-     {{item.email}}  <span class="badge badge-light">${{item.bill}}</span>
+     {{item.firstname}}  <span class="badge badge-light">${{item.bill}}</span>
 	 
-	 <ion-option-button class="button-assertive"
+	 <ion-option-button class="button-assertive" ng-disabled="isDisabled"
                              ng-click="edit(item)">
             Edit
      </ion-option-button>
@@ -19,7 +19,7 @@
     </ion-item>
 
 
-	<button class="button button-block button-stable" ng-click="calculateBill()">
+	<button class="button button-block button-stable" ng-disabled="isDisabled" ng-click="calculateBill()">
 		Final Bill
 	</button>
 </ion-list>

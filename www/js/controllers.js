@@ -94,7 +94,15 @@ forkapp.controller('SignInCtrl', ['$scope', '$rootScope', '$firebaseAuth', 'Curr
            password: password
         }, function (error, authData) {
 		if (error) {
-			console.log("Login Failed!", error);
+		
+			var alertPopup = $ionicPopup.alert({
+			 title: 'Login Error',
+			 template: 'Login Failed'
+			 });
+			 alertPopup.then(function(res) {
+			 return;
+			 });
+			
 			} else {
 			var id = authData.uid
 			CurrUser.currUser(id);
@@ -241,6 +249,7 @@ forkapp.controller('ParticipantCtrl', ['$scope', '$state', '$ionicHistory', 'Cur
 /////////////////////////////////////////////////////////// EVENT CONTROLLER//////////////////////////////////////////////////////////////	
 	
 forkapp.controller('myeventsCtrl', ['$scope', '$state', '$window', 'CurrUser', '$q', '$timeout', '$ionicHistory', '$ionicPopup', '$ionicModal', function($scope, $state, $window, CurrUser, $q, $timeout, $ionicHistory, $ionicPopup, $ionicModal)  { 
+$scope.isDisabled = false;
 $scope.hideBackButton = true;
 $scope.userlist = [];
 var settled = " ";
@@ -249,6 +258,21 @@ var eventref = ref.child('Events');
 var userref = ref.child('Users');
 var eventid = CurrUser.getEventid();
 var userarr = [];
+
+function checkBillSubmission() {
+			  return $q(function(resolve) { 
+				var eventid = CurrUser.getEventid();
+				var control = ref.child("BillControl").child(eventid).once("value", function (snapshot) {
+				var control = snapshot.exists();
+				resolve(control);
+					}); 
+				});
+			  };
+checkBillSubmission().then(function (result) {
+			 if (result == true) {
+			 $scope.isDisabled = true;
+			 }
+			 });
 
 function eventusers(id) {
 return $q(function(resolve) {
@@ -261,7 +285,7 @@ return $q(function(resolve) {
 		if(obj[prop] == "True") {
 		promises.push($q(function(resolve) {
 			userref.child(prop).on("value", function (snap) {
-			var id = snap.val().email;
+			var id = snap.val().firstname;
 			resolve(id);
 			}); 
 			}));
@@ -369,15 +393,7 @@ return a.email > b.email;
 }
 var calcarray = [];
 
- function checkBillSubmission() {
-			  return $q(function(resolve) { 
-				var eventid = CurrUser.getEventid();
-				var control = ref.child("BillControl").child(eventid).once("value", function (snapshot) {
-				var control = snapshot.exists();
-				resolve(control);
-					}); 
-				});
-			  };
+ 
 
  function updateDb() {
 			
@@ -395,11 +411,37 @@ var calcarray = [];
 			 return;
 			 });
 			 }
-			 
+				
 			   if (calcarray.length != usercount) {
-			   alert("Missing billing info of one user");
+			     var alertPopup = $ionicPopup.alert({
+			     title: 'Error',
+			     template: 'Missing bill(s)'
+			     });
+			       alertPopup.then(function(res) {
+			         return;
+			       });
 			   } else if (result != true)  {
-			    
+			    var eventid = CurrUser.getEventid();
+				$scope.isDisabled = true;
+				CurrUser.getEventdesc(eventid).then(function (result) {
+				var temp = result;
+				for (var itemID in temp) {
+					var tmp = temp[itemID];
+					var desc = tmp.Description;
+					var submit = "(Submitted)";
+					var newdesc = desc.concat(submit);
+					eventref.orderByChild('Eventid').equalTo(eventid).on("value", function(snap) {
+						var obj = snap.val();
+						var fbpushkey = Object.keys(obj);
+							for (var key in fbpushkey) {
+								var pushkey = fbpushkey[key];
+									eventref.child(pushkey).update({Description : newdesc});
+											};
+									});
+								}
+							});
+				
+				
 				var eventid = CurrUser.getEventid();
 					var onComplete = function (error) {
 						if (error) {
@@ -426,13 +468,14 @@ var calcarray = [];
 		};
 
 $scope.calculateBill = function () {
+		
+		
 	   var confirmPopup = $ionicPopup.confirm({
        title: 'Final Bill',
        template: 'Submit Bill?'
 		});
 		confirmPopup.then(function(res) {
 		if(res) {
-		var eventid = CurrUser.getEventid();
 		
 		eventref.orderByChild("Eventid").equalTo(eventid).on ("value", function(snapshot) {
 		var snap = snapshot.val();
@@ -443,7 +486,6 @@ $scope.calculateBill = function () {
 		
         sortArray($scope.bills,"email");
 		var tmparray = [];
-		
 		
 		angular.forEach($scope.bills, function (value, key) {
 		var tmp = value;
@@ -551,7 +593,7 @@ forkapp.controller('addbillCtrl', ['$scope', '$state', '$window', 'CurrUser', '$
 	 
 	 angular.forEach(userarray, function(value,key) {
 	 userref.child(value).on("value", function (childsnap) {
-	 updateBuddies(childsnap.val().email);
+	 updateBuddies(childsnap.val());
 			});
 		  });
 		 }
@@ -569,17 +611,13 @@ forkapp.controller('addbillCtrl', ['$scope', '$state', '$window', 'CurrUser', '$
 	tmp.eventid = eventid;
 	});
 	CurrUser.updateBill(tmp);
+	$state.go('myevents');
 	};
 	
-	$scope.getBill = function() {
-		$state.go('myevents');
-		$window.location.reload();
-		
-	};
 
 	}]);
 	
-forkapp.controller('summaryCtrl', ['$scope', '$state', '$window', '$timeout', 'CurrUser', function($scope, $state, $window, $timeout, CurrUser)  {
+forkapp.controller('summaryCtrl', ['$scope', '$state', '$window', '$timeout', 'CurrUser', '$q', function($scope, $state, $window, $timeout, CurrUser, $q)  {
 	var finalref = ref.child('FinalBill');
 	var eventid = CurrUser.getEventid();
 	$scope.uevent = " ";
@@ -599,6 +637,11 @@ forkapp.controller('summaryCtrl', ['$scope', '$state', '$window', '$timeout', 'C
 			})
 		},1000);
 		};
+		
+	function emailToName(email) {
+	var nameObj = CurrUser.getNameFrmEmail(email);
+	return nameObj;
+	};
 
 	CurrUser.getEventdesc(eventid).then(function (result) {
 	var description = result;
@@ -614,6 +657,7 @@ forkapp.controller('summaryCtrl', ['$scope', '$state', '$window', '$timeout', 'C
 	
 	 
 	 finalref.child(eventid).on("value", function (snapshot) {
+	 
 	 var snap = snapshot.val();
 	 angular.forEach(snap, function (value,key) {
 	  angular.forEach(value, function(value,key) {
@@ -633,18 +677,63 @@ forkapp.controller('summaryCtrl', ['$scope', '$state', '$window', '$timeout', 'C
 	 };
 	 sortArray(divarray,"bill");
 	 
+	
+	
+	
 	 for (var i = 0; i < divarray.length; i++) {
 	 
 	 for (var j = i + 1; j < divarray.length; j++) {
+	 
+	 
+	  var amount = (divarray[i].bill - divarray[j].bill).toFixed(2);
+	  function getBillAmount(amount) {
+	  return $q(function(resolve) {
+	  resolve(amount);
+	  });
+	  };
+	  
+	  var payeeEmail = divarray[j].email;
+	  
+	  function getPayeeName(payeeEmail) {
+	  return $q(function(resolve) {
+		CurrUser.getNameFrmEmail(payeeEmail).then(function (result) {
+		 var userObj = result;
+		 angular.forEach(userObj, function (value,key) {
+		 var payee = value.firstname;
+		 resolve(payee);
+		 });
+		});
+		});
+		};
+		
+	 
+	  var bossEmail = divarray[i].email;
+	  function getBossName(bossEmail) {
+	  return $q(function(resolve) {
+		CurrUser.getNameFrmEmail(bossEmail).then(function (result) {
+		var userObj = result;
+		 angular.forEach(userObj, function (value,key) {
+		 var boss = value.firstname;
+		 resolve(boss);
+		 });
+		 
+		});
+		});
+		};
+	 
+	 $q.all({amt: getBillAmount(amount), pay: getPayeeName(payeeEmail), boss: getBossName(bossEmail)}).then(function (responses) {
 	 var fbill = {};
-	  fbill.amount = (divarray[i].bill - divarray[j].bill).toFixed(2);
-	  fbill.payee = divarray[j].email;
-	  fbill.boss = divarray[i].email;
-	  
-	  $scope.farray.push(fbill);
-	  
-	 }
-	 }
+	 var amt = responses.amt;
+	 var pay = responses.pay;
+	 var boss = responses.boss;
+	 fbill.amount = amt;
+	 fbill.payee = pay;
+	 fbill.boss = boss;
+	 $scope.farray.push(fbill);
+	 });
+	 
+	 }; // for loop
+	 }; // for loop
 	 
 	 });
 	

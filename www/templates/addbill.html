@@ -5,8 +5,8 @@
   <div class="item row">
   <div class="col" >
 	<ion-item align="left" ng-repeat="buddy in buddies">
-	{{buddy}}
-	<input type="number" placeholder="Bill Amt" ng-model="bill[buddy]">
+	{{buddy.firstname}}
+	<input type="number" placeholder="Bill Amt" ng-model="bill[buddy.email]">
 	</div>
   </div>
 	</ion-item>
@@ -14,9 +14,6 @@
 
  <button class="button button-block button-stable" ng-click="pushBill()">
 	Add Bill
-</button>
- <button class="button button-block button-stable" ng-click="getBill()">
-	Get Bill
 </button>
 </ion-content>
 </ion-view>
