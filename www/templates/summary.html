@@ -1,7 +1,7 @@
 <ion-view view-title="{{uevent}}">
  <ion-content>
 	<div class="list">
-	<ion-item align="center" ng-repeat="buddy in farray | orderBy:'-payee' | filter: { amount: '!0.0' }" >
+	<ion-item align="center" ng-repeat="buddy in farray | orderBy:'payee' | filter: { amount: '!0.0' }" >
 	<p> <span style="word-spacing:150px">{{buddy.payee}}</span> <span style="word-spacing:150px">Pay</span> <span style="word-spacing:150px"> ${{buddy.amount}}</span> <span style="word-spacing:150px"> To</span> <span style="word-spacing:150px"> {{buddy.boss}}</span> </p>
 	</ion-item>
 	
