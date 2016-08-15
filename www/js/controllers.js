@@ -113,7 +113,7 @@ forkapp.controller('SignInCtrl', ['$scope', '$rootScope', '$firebaseAuth', 'Curr
   }
 ]) 
 
-forkapp.controller('EventCtrl', ['$scope', '$state', '$window', '$rootScope', 'CurrUser', '$firebase', '$q', function($scope, $state, $window, $rootScope, CurrUser, $firebase, $q) {
+forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', 'CurrUser', '$firebase', '$q', function($scope, $state, $timeout, $rootScope, CurrUser, $firebase, $q) {
 	$scope.events = [];
 	var currlogin;
 	var fbAuth = ref.getAuth();
@@ -126,6 +126,7 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$window', '$rootScope', 'C
  
 		
 		function getEventDescription() {
+		$timeout(function(){
 		    var deferred = $q.defer();
 		    eventref.orderByChild(currlogin).on("value", function(snapshot) {
 				snapshot.forEach(function(childSnapshot) {
@@ -139,6 +140,7 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$window', '$rootScope', 'C
 				});
 			});
 		return deferred.promise;
+		},500);
 		}
 		
 		var description = getEventDescription();
