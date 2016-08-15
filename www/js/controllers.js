@@ -35,11 +35,11 @@ var forkapp = angular.module('fork.controllers', ["firebase", "ionic-modal-selec
 				$scope.temp = {
                         firstname: $scope.firstname,
                         surname: $scope.surname,
-                        email: $scope.email,
-						Eventid: 0
+                        email: $scope.email
                                }
 					
-                    var usersRef = UserData.ref();
+                    //var usersRef = UserData.ref();
+					var usersRef = ref.child('Users');
 					
 					var myUser = usersRef.child(id);
 					myUser.update($scope.temp, function( ret ){
@@ -68,7 +68,7 @@ var forkapp = angular.module('fork.controllers', ["firebase", "ionic-modal-selec
         } 
 		])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-forkapp.controller('SignInCtrl', ['$scope', '$rootScope', '$firebaseAuth', 'CurrUser', '$state', function ($scope, $rootScope, $firebaseAuth, CurrUser, $state) {
+forkapp.controller('SignInCtrl', ['$scope', '$rootScope', '$firebaseAuth', 'CurrUser', '$state', '$ionicPopup', function ($scope, $rootScope, $firebaseAuth, CurrUser, $state, $ionicPopup) {
 	
 	$rootScope.checkSession();
      $scope.user = {
@@ -126,24 +126,25 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', '
  
 		
 		function getEventDescription() {
-		$timeout(function(){
-		    var deferred = $q.defer();
+		var deferred = $q.defer();
 		    eventref.orderByChild(currlogin).on("value", function(snapshot) {
 				snapshot.forEach(function(childSnapshot) {
 				var tmp = childSnapshot.val();
 				if ( tmp[currlogin] == "True" ) {
-				$scope.events.push(tmp);
-				deferred.resolve($scope.events);
+				deferred.resolve(tmp);
 				} else { 
-				deferred.reject("No Value");
+				deferred.reject("No Events")
 				}
 				});
 			});
 		return deferred.promise;
-		},500);
-		}
+		};
 		
-		var description = getEventDescription();
+		getEventDescription().then(function (resolve) {
+		$scope.events.push(resolve);
+		}, function (reject) {
+		console.log(reject);
+		});
 		
 	
 		$scope.createEvent = function () {
