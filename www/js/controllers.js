@@ -126,12 +126,16 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', '
  
 		
 		function getEventDescription() {
+		var myEvents = [];
 		var deferred = $q.defer();
 		    eventref.orderByChild(currlogin).on("value", function(snapshot) {
 				snapshot.forEach(function(childSnapshot) {
 				var tmp = childSnapshot.val();
+				console.log(tmp);
 				if ( tmp[currlogin] == "True" ) {
-				deferred.resolve(tmp);
+				myEvents.push(tmp);
+				console.log(tmp);
+				deferred.resolve(myEvents);
 				} else { 
 				deferred.reject("No Events")
 				}
@@ -141,9 +145,11 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', '
 		};
 		
 		getEventDescription().then(function (resolve) {
-		$scope.events.push(resolve);
+		angular.forEach(resolve, function(value) {
+		$scope.events.push(value);
 		}, function (reject) {
 		console.log(reject);
+		});
 		});
 		
 	
