@@ -424,7 +424,7 @@ var calcarray = [];
 			 }
 				
 			   if (calcarray.length != usercount) {
-				   alert(calcarray.length);
+				   alert(calcarray);
 			     var alertPopup = $ionicPopup.alert({
 			     title: 'Error',
 			     template: 'Missing bill(s)'
