@@ -302,7 +302,9 @@ return $q(function(resolve) {
 	  };
 	  $q(function(resolve) {
 	  usercount = promises.length;
-	  resolve(usercount); });
+	  resolve(usercount); 
+	  alert(usercount)
+	  });
 	});
 	resolve($q.all(promises));
  });
@@ -507,7 +509,6 @@ $scope.calculateBill = function () {
 		});
 		
 		for (var i = 0; i < tmparray.length; i--) {
-			
 		if (tmparray.length == 1) {
 		i = 0;
 		var calcobj = {};
