@@ -131,10 +131,10 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', '
 		    eventref.orderByChild(currlogin).on("value", function(snapshot) {
 				snapshot.forEach(function(childSnapshot) {
 				var tmp = childSnapshot.val();
-				console.log(tmp);
+				
 				if ( tmp[currlogin] == "True" ) {
 				myEvents.push(tmp);
-				console.log(tmp);
+				
 				deferred.resolve(myEvents);
 				} else { 
 				deferred.reject("No Events")
@@ -303,7 +303,6 @@ return $q(function(resolve) {
 	  $q(function(resolve) {
 	  usercount = promises.length;
 	  resolve(usercount); 
-	  alert(usercount)
 	  });
 	});
 	resolve($q.all(promises));
@@ -424,7 +423,6 @@ var calcarray = [];
 			 }
 				
 			   if (calcarray.length != usercount) {
-				   alert(calcarray);
 			     var alertPopup = $ionicPopup.alert({
 			     title: 'Error',
 			     template: 'Missing bill(s)'
@@ -476,7 +474,7 @@ var calcarray = [];
 				};
 				});
 				
-		},1000);
+		},2000);
 		};
 
 $scope.calculateBill = function () {
@@ -526,6 +524,7 @@ $scope.calculateBill = function () {
 			calcobj.email = tmparray[i].email;
 			calcobj.bill = tmparray[i].bill;
 			calcarray.push(calcobj);
+			console.log(calcarray);
 			tmparray.shift();
 			  
 		   } else if (tmparray[i].email == tmparray[j].email) {
@@ -537,6 +536,7 @@ $scope.calculateBill = function () {
 		   tmparray.shift();
 		   tmparray.shift();
 		   tmparray.unshift(calcobj);
+		   console.log(calcarray)
 			 };
 			 j = 0;
 		    };
