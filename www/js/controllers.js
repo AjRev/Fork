@@ -495,10 +495,11 @@ $scope.calculateBill = function () {
 		count = value.Count;
 		});
 		});
-		
+		console.log($scope.bills);
         sortArray($scope.bills,"email");
 		var tmparray = [];
-		
+		console.log("After");
+        console.log($scope.bills);
 		angular.forEach($scope.bills, function (value, key) {
 		var tmp = value;
 		
