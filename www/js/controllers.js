@@ -496,7 +496,7 @@ $scope.calculateBill = function () {
 		});
 		});
 		console.log($scope.bills);
-        sortArray($scope.bills,"email");
+        sortArray($scope.bills,email);
 		var tmparray = [];
 		console.log("After");
         console.log($scope.bills);
