@@ -425,6 +425,8 @@ var calcarray = [];
 			 }
 				
 			   if (calcarray.length != usercount) {
+                   console.log(calcarray);
+                   console.log(usercount);
 			     var alertPopup = $ionicPopup.alert({
 			     title: 'Error',
 			     template: 'Missing bill(s)'
@@ -496,12 +498,17 @@ $scope.calculateBill = function () {
 		});
 		});
 		console.log($scope.bills);
+
 		$scope.bills = $filter('orderBy')($scope.bills,'email')
         //sortArray($scope.bills,"email");
 		console.log("After");
 		console.log($scope.bills);
+
+        sortArray($scope.bills,email);
+
 		var tmparray = [];
-		
+		console.log("After");
+        console.log($scope.bills);
 		angular.forEach($scope.bills, function (value, key) {
 		var tmp = value;
 		
