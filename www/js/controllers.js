@@ -398,7 +398,7 @@ $state.go('addbill');
 
 function sortArray(bills,email) {
 bills.sort(function (a,b) {
-return a.email > b.email;
+return a[email] > b[email];
 });
 }
 var calcarray = [];
