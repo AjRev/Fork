@@ -490,7 +490,7 @@ $scope.calculateBill = function () {
 		});
 		confirmPopup.then(function(res) {
 		if(res) {
-		
+		alert("Submitting");
 		eventref.orderByChild("Eventid").equalTo(eventid).on ("value", function(snapshot) {
 		var snap = snapshot.val();
 		angular.forEach(snap, function(value,key) {
@@ -503,7 +503,7 @@ $scope.calculateBill = function () {
         //sortArray($scope.bills,"email");
 		console.log("After");
 		console.log($scope.bills);
-		alert("Sorted");
+		
         //sortArray($scope.bills,email);
 
 		var tmparray = [];
