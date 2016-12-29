@@ -257,7 +257,7 @@ forkapp.controller('ParticipantCtrl', ['$scope', '$state', '$ionicHistory', 'Cur
 	
 /////////////////////////////////////////////////////////// EVENT CONTROLLER//////////////////////////////////////////////////////////////	
 	
-forkapp.controller('myeventsCtrl', ['$scope', '$state', '$window', 'CurrUser', '$q', '$timeout', '$ionicHistory', '$ionicPopup', '$ionicModal', function($scope, $state, $window, CurrUser, $q, $timeout, $ionicHistory, $ionicPopup, $ionicModal)  { 
+forkapp.controller('myeventsCtrl', ['$scope', '$state', '$window', 'CurrUser', '$q', '$timeout', '$ionicHistory', '$ionicPopup', '$ionicModal', '$filter', function($scope, $state, $window, CurrUser, $q, $timeout, $ionicHistory, $ionicPopup, $ionicModal, $filter)  { 
 $scope.isDisabled = false;
 $scope.hideBackButton = true;
 $scope.userlist = [];
@@ -337,6 +337,7 @@ $scope.bills = [];
 	
 updateBill().then(function (bills) {
 angular.forEach(bills, function(value,key) {
+	console.log(value);
 $scope.bills.push(value);
 });
 console.log($scope.bills);
@@ -494,8 +495,11 @@ $scope.calculateBill = function () {
 		count = value.Count;
 		});
 		});
-		
-        sortArray($scope.bills,"email");
+		console.log($scope.bills);
+		$scope.bills = $filter('orderBy')($scope.bills,'email')
+        //sortArray($scope.bills,"email");
+		console.log("After");
+		console.log($scope.bills);
 		var tmparray = [];
 		
 		angular.forEach($scope.bills, function (value, key) {
