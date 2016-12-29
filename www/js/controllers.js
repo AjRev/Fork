@@ -339,6 +339,7 @@ updateBill().then(function (bills) {
 angular.forEach(bills, function(value,key) {
 $scope.bills.push(value);
 });
+console.log($scope.bills);
 });
 
 
@@ -398,7 +399,7 @@ $state.go('addbill');
 
 function sortArray(bills,email) {
 bills.sort(function (a,b) {
-return a.email > b.email;
+return a[email] > b[email];
 });
 }
 var calcarray = [];
@@ -506,7 +507,7 @@ $scope.calculateBill = function () {
 		  tmparray.push(billobj);
 		  
 		});
-		
+		$timeout(function(){
 		for (var i = 0; i < tmparray.length; i--) {
 		if (tmparray.length == 1) {
 		i = 0;
@@ -539,10 +540,10 @@ $scope.calculateBill = function () {
 		   console.log(calcarray)
 			 };
 			 j = 0;
-		    };
-		
+		    }; // for loop
+		},1000);
 		updateDb();
-		} else {
+		} else { //if loop
 		return;
 		};
 		});
