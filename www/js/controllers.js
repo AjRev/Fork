@@ -503,8 +503,8 @@ $scope.calculateBill = function () {
         //sortArray($scope.bills,"email");
 		console.log("After");
 		console.log($scope.bills);
-
-        sortArray($scope.bills,email);
+		alert("Sorted");
+        //sortArray($scope.bills,email);
 
 		var tmparray = [];
 		console.log("After");
