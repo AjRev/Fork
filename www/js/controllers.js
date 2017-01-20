@@ -153,8 +153,7 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', '
 		});
 				
 		$scope.createEvent = function () {
-		$state.go('list', {}, {reload : true});
-		$window.location.reload();
+		$state.go('list');
 		}
 		
 		$scope.displayEvent = function(id) {
