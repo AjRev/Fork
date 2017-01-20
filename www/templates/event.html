@@ -9,7 +9,7 @@
   
 	<div class="list">
 	
-	<button class= "button button-block button-stable" ng-repeat="event in events | orderBy:'-Date'" ng-click="displayEvent(event.Eventid)"/>
+	<button class= "button button-block button-stable" ng-repeat="event in events | orderBy:'Date'" ng-click="displayEvent(event.Eventid)"/>
 	<p class="alignleft">{{event.Description}}</p>
 	<p class="alignright">{{event.Date}}</p>
 	<div style="clear: both;"></div>

@@ -4,7 +4,7 @@
   <ion-list>
   <div class="item row">
   <div class="col" >
-	<ion-item align="left" ng-repeat="buddy in buddies">
+	<ion-item align="left" ng-repeat="buddy in buddies | orderBy:'firstname'">
 	{{buddy.firstname}}
 	<input type="number" placeholder="Bill Amt" ng-model="bill[buddy.email]">
 	</div>

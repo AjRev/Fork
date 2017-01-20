@@ -113,7 +113,7 @@ forkapp.controller('SignInCtrl', ['$scope', '$rootScope', '$firebaseAuth', 'Curr
   }
 ]) 
 
-forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', 'CurrUser', '$firebase', '$q', function($scope, $state, $timeout, $rootScope, CurrUser, $firebase, $q) {
+forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', 'CurrUser', '$firebase', '$q', '$window', function($scope, $state, $timeout, $rootScope, CurrUser, $firebase, $q, $window) {
 	$scope.events = [];
 	var currlogin;
 	var fbAuth = ref.getAuth();
@@ -151,10 +151,10 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', '
 		console.log(reject);
 		});
 		});
-		
-	
+				
 		$scope.createEvent = function () {
-		$state.go('list');
+		$state.go('list', {}, {reload : true});
+		$window.location.reload();
 		}
 		
 		$scope.displayEvent = function(id) {
@@ -165,17 +165,16 @@ forkapp.controller('EventCtrl', ['$scope', '$state', '$timeout', '$rootScope', '
 		
 	}]);
 ///////////////////////////////////////////////////////////LIST CONTROLLER//////////////////////////////////////////////////////////////
-forkapp.controller('ListCtrl', ['$scope', '$state', '$rootScope', '$ionicHistory', 'CurrUser', '$window', function($scope, $state, $rootScope, $ionicHistory, CurrUser, $window) {
+forkapp.controller('ListCtrl', ['$scope', '$state', '$rootScope', '$ionicHistory', 'CurrUser', '$window', '$filter', function($scope, $state, $rootScope, $ionicHistory, CurrUser, $window, $filter) {
 	$scope.hideBackButton = true;
 	var eventref = ref.child('Events');
 	var userref = ref.child('Users');
-	
 	$scope.goBack = function() {
 	$state.go('event');
 	};
 	
 	function goBack() {
-	$state.go('event');
+	$state.go('event', { reload : true });
 	};
 	
 	
@@ -192,7 +191,9 @@ forkapp.controller('ListCtrl', ['$scope', '$state', '$rootScope', '$ionicHistory
 	function userCount() {
 	return participants.length;
 	};
-	
+	list.date = new Date(list.date);
+	list.date = $filter('date')(list.date,'dd/MMM/yyyy');
+	console.log(list.date);
      $scope.event = {
 	 Description : list.description,
 	 Venue : list.venue,
@@ -200,7 +201,7 @@ forkapp.controller('ListCtrl', ['$scope', '$state', '$rootScope', '$ionicHistory
 	 Eventid : Eventid(),
 	 Count : userCount(),
 	 };
-	 
+	 console.log($scope.event);
 	 var postevent = eventref.push($scope.event, function (error) {
 	 if (error) {
 	 alert("Data not saved. Pls try again");
@@ -337,10 +338,8 @@ $scope.bills = [];
 	
 updateBill().then(function (bills) {
 angular.forEach(bills, function(value,key) {
-	console.log(value);
 $scope.bills.push(value);
 });
-console.log($scope.bills);
 });
 
 
@@ -499,16 +498,10 @@ $scope.calculateBill = function () {
 		});
 		console.log($scope.bills);
 
-		$scope.bills = $filter('orderBy')($scope.bills,'email')
-        //sortArray($scope.bills,"email");
-		console.log("After");
-		console.log($scope.bills);
-		
-        //sortArray($scope.bills,email);
-
+		$scope.bills = $filter('orderBy')($scope.bills,'email');
+	
 		var tmparray = [];
-		console.log("After");
-        console.log($scope.bills);
+		
 		angular.forEach($scope.bills, function (value, key) {
 		var tmp = value;
 		
@@ -599,6 +592,7 @@ forkapp.controller('addbillCtrl', ['$scope', '$state', '$window', 'CurrUser', '$
 	$timeout(function(){
         $scope.$apply(function () { 
 			$scope.buddies.push(user);
+			console.log($scope.buddies);
 			})
 		},1000);
 		};
@@ -640,11 +634,14 @@ forkapp.controller('addbillCtrl', ['$scope', '$state', '$window', 'CurrUser', '$
 
 	}]);
 	
-forkapp.controller('summaryCtrl', ['$scope', '$state', '$window', '$timeout', 'CurrUser', '$q', function($scope, $state, $window, $timeout, CurrUser, $q)  {
+forkapp.controller('summaryCtrl', ['$scope', '$state', '$window', '$timeout', 'CurrUser', '$q', '$filter', function($scope, $state, $window, $timeout, CurrUser, $q, $filter)  {
 	var finalref = ref.child('FinalBill');
 	var eventid = CurrUser.getEventid();
 	$scope.uevent = " ";
 	var temp = [];
+	var temp1 = [];
+	var posArray = [];
+	var negArray = [];
 	$scope.farray = [];
 	
 	function sortArray(bills,bill) {
@@ -684,84 +681,200 @@ forkapp.controller('summaryCtrl', ['$scope', '$state', '$window', '$timeout', 'C
 	 var snap = snapshot.val();
 	 angular.forEach(snap, function (value,key) {
 	  angular.forEach(value, function(value,key) {
-	  temp.push(value);
+	  temp1.push(value);
 	  });
 	 });
-	 sortArray(temp,"bill");
+	 temp1 = $filter('orderBy')(temp1,'-bill')
+	 var total = 0;
+	 for (var i = 0; i < temp1.length; i++) {
+		 total = total + temp1[i].bill;
+			}
 	 
-	 var divarray = [];
-	 for (var i = 0; i < temp.length; i++) {
-	 var divbill = {};
-	 temp[i].bill = temp[i].bill/temp.length;
+	 var mean = ((total/temp1.length).toFixed(2));
+	 console.log(mean);
 	 
-	 divbill.bill = temp[i].bill;
-	 divbill.email = temp[i].email;
-	 divarray.push(divbill);
-	 };
-	 sortArray(divarray,"bill");
-	 
-	
-	
-	
-	 for (var i = 0; i < divarray.length; i++) {
-	 
-	 for (var j = i + 1; j < divarray.length; j++) {
-	 
-	 
-	  var amount = (divarray[i].bill - divarray[j].bill).toFixed(2);
-	  function getBillAmount(amount) {
-	  return $q(function(resolve) {
-	  resolve(amount);
-	  });
-	  };
-	  
-	  var payeeEmail = divarray[j].email;
-	  
-	  function getPayeeName(payeeEmail) {
-	  return $q(function(resolve) {
-		CurrUser.getNameFrmEmail(payeeEmail).then(function (result) {
-		 var userObj = result;
-		 angular.forEach(userObj, function (value,key) {
-		 var payee = value.firstname;
-		 resolve(payee);
-		 });
-		});
-		});
-		};
-		
-	 
-	  var bossEmail = divarray[i].email;
-	  function getBossName(bossEmail) {
-	  return $q(function(resolve) {
-		CurrUser.getNameFrmEmail(bossEmail).then(function (result) {
-		var userObj = result;
-		 angular.forEach(userObj, function (value,key) {
-		 var boss = value.firstname;
-		 resolve(boss);
-		 });
+	 for (var i = 0; i < temp1.length; i++) {
+		 var diff = (mean - parseFloat(temp1[i].bill)).toFixed(2);
 		 
-		});
-		});
-		};
+		 if (diff < 0){
+			 var negBillers = {};
+			 negBillers.email = temp1[i].email;
+			 negBillers.bill = diff;
+			 negArray.push(negBillers);
+		 } else {
+			 var posBillers = {};
+			 posBillers.email = temp1[i].email;
+			 posBillers.bill = diff;
+			 posArray.push(posBillers);
+			 
+		 }
+	 }
 	 
-	 $q.all({amt: getBillAmount(amount), pay: getPayeeName(payeeEmail), boss: getBossName(bossEmail)}).then(function (responses) {
-	 var fbill = {};
-	 var amt = responses.amt;
-	 var pay = responses.pay;
-	 var boss = responses.boss;
-	 fbill.amount = amt;
-	 fbill.payee = pay;
-	 fbill.boss = boss;
-	 $scope.farray.push(fbill);
+	 
+	 negArray = $filter('orderBy')(negArray,'-bill');
+	 posArray = $filter('orderBy')(posArray,'bill');
+	 
+	 
+// Function definitions
+	function getBillAmount(amount) {
+		return $q(function(resolve) {
+			resolve(amount);
+					});
+				};
+
+	function getPayeeName(payeeEmail) {
+		return $q(function(resolve) {
+			CurrUser.getNameFrmEmail(payeeEmail).then(function (result) {
+				var userObj = result;
+					angular.forEach(userObj, function (value,key) {
+						var payee = value.firstname;
+							resolve(payee);
+								});
+							});
+						});
+				};
+				
+	function getBossName(bossEmail) {
+		return $q(function(resolve) {
+			CurrUser.getNameFrmEmail(bossEmail).then(function (result) {
+				var userObj = result;
+					angular.forEach(userObj, function (value,key) {
+						var boss = value.firstname;
+						resolve(boss);
+						});
+					});
+				});
+				};
+// End of function definitions	
+	 var k = 0;
+	 for(var i = 0; i < negArray.length; i++) {
+		 var x = parseFloat(negArray[i].bill) + parseFloat(posArray[k].bill);
+		 var flag=" ";
+			for (var counter=0; flag="stop";) {
+				console.log("Counter " +counter);
+				console.log("x is " +x);
+			if (x < 0) {
+				var amnt = parseFloat(posArray[k].bill);
+				var amount = amnt.toFixed(2);
+				var payeeEmail = posArray[k].email;
+				var bossEmail = negArray[i].email;
+				console.log("less than 0 " +amount);
+				$q.all({amt: getBillAmount(amount), pay: getPayeeName(payeeEmail), boss: getBossName(bossEmail)}).then(function (responses) {
+				var fbill = {};
+				var amt = responses.amt;
+				var pay = responses.pay;
+				var boss = responses.boss;
+				fbill.amount = amt;
+				fbill.payee = pay;
+				fbill.boss = boss;
+				$scope.farray.push(fbill);
+				$scope.farray = $filter('orderBy')($scope.farray,'payee');
+				});
+				
+				console.log("length before " +posArray.length);
+				posArray.splice(0,1);
+				 if (posArray.length == 0){
+					 break;
+				 }
+				
+				//var diffamt = ((x + parseFloat(posArray[k].bill)).toFixed(2));
+				  var diffamt = x + parseFloat(posArray[k].bill);
+				console.log("diffamount " +diffamt);
+				 if (diffamt > 0) {
+					var amnt = Math.abs(x);
+					var amount = amnt.toFixed(2);
+					var payeeEmail = posArray[k].email;
+					var bossEmail = negArray[i].email; 
+					$q.all({amt: getBillAmount(amount), pay: getPayeeName(payeeEmail), boss: getBossName(bossEmail)}).then(function (responses) {
+					var fbill = {};
+					var amt = responses.amt;
+					var pay = responses.pay;
+					var boss = responses.boss;
+					fbill.amount = amt;
+					fbill.payee = pay;
+					fbill.boss = boss;
+					$scope.farray.push(fbill);
+					$scope.farray = $filter('orderBy')($scope.farray,'payee');
+				        });
+				 posArray[k].bill = diffamt;
+				 
+				 var flag = "stop";
+				 break; // break from the counter loop and skip to the for loop on negarray. Meaning that the 1'st element in negarray was settled
+				 } 
+				counter++; 
+				
+			} else if (x > 0) {
+				var y = Math.abs(negArray[i].bill);
+				var z = posArray[k].bill;
+				  if (y < z) {
+					  var amnt = y;
+					  var amount = amnt.toFixed(2);
+					  var payeeEmail = posArray[k].email;
+					  var bossEmail = negArray[i].email;
+					  console.log("greater " +amount);
+				$q.all({amt: getBillAmount(amount), pay: getPayeeName(payeeEmail), boss: getBossName(bossEmail)}).then(function (responses) {
+				var fbill = {};
+				var amt = responses.amt;
+				var pay = responses.pay;
+				var boss = responses.boss;
+				fbill.amount = amt;
+				fbill.payee = pay;
+				fbill.boss = boss;
+				$scope.farray.push(fbill);
+				$scope.farray = $filter('orderBy')($scope.farray,'payee');
+				});
+					  posArray[k].bill = x;
+					  var flag = "stop"
+					  break;
+				  }
+			   var flag = "stop";
+			   var amnt = x;
+			   var amount = amnt.toFixed(2);
+			   var payeeEmail = posArray[k].email;
+			   var bossEmail = negArray[i].email;
+			   
+			   $q.all({amt: getBillAmount(amount), pay: getPayeeName(payeeEmail), boss: getBossName(bossEmail)}).then(function (responses) {
+				var fbill = {};
+				var amt = responses.amt;
+				var pay = responses.pay;
+				var boss = responses.boss;
+				fbill.amount = amt;
+				fbill.payee = pay;
+				fbill.boss = boss;
+				$scope.farray.push(fbill);
+				$scope.farray = $filter('orderBy')($scope.farray,'payee');
+				});
+			   posArray[k].bill = x;
+			   break;
+			} else {
+				var amnt = posArray[k].bill;
+				var amount = amnt.toFixed(2);
+				var payeeEmail = posArray[k].email;
+				
+				var bossEmail = negArray[i].email;
+				console.log("zero " +amount);
+				$q.all({amt: getBillAmount(amount), pay: getPayeeName(payeeEmail), boss: getBossName(bossEmail)}).then(function (responses) {
+				var fbill = {};
+				var amt = responses.amt;
+				var pay = responses.pay;
+				var boss = responses.boss;
+				fbill.amount = amt;
+				fbill.payee = pay;
+				fbill.boss = boss;
+				$scope.farray.push(fbill);
+				$scope.farray = $filter('orderBy')($scope.farray,'payee');
+				});
+				
+				
+				break;
+			}
+				
+			}		
+				
+				
+	 } // for loop	 
 	 });
-	 
-	 }; // for loop
-	 }; // for loop
-	 
-	 });
-	
-	 
-	 }]);
+  }]);
 	
 	
 function escapeEmailAddress(email) {
